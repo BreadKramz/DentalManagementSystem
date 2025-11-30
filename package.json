@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "build-css": "postcss assets/styles/app.css -o public/assets/styles/app.css",
+    "watch-css": "postcss assets/styles/app.css -o public/assets/styles/app.css --watch",
+    "build": "npm run build-css",
+    "dev": "npm run watch-css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "postcss-cli": "^11.0.0"
+  }
+}
