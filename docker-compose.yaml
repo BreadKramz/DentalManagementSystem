@@ -3,7 +3,7 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     environment: 
-      MYSQL_ROOT_PASSWORD: ${DMS_rootpassword}
+      MYSQL_ROOT_PASSWORD: ${DMS_rootpassword} #DMS=DentalManagementSystem
       MYSQL_DATABASE: ${DentalManagementSystem}
       MYSQL_USER: ${DMS_user}
       MYSQL_PASSWORD: ${DMS_password}   
