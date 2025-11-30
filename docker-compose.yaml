@@ -1,0 +1,35 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment: 
+      MYSQL_ROOT_PASSWORD: ${DMS_rootpassword}
+      MYSQL_DATABASE: ${DentalManagementSystem}
+      MYSQL_USER: ${DMS_user}
+      MYSQL_PASSWORD: ${DMS_password}   
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql    
+    networks: 
+      - DMS_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql 
+      PMA_USER: ${DMS_user}
+      PMA_PASSWORD: ${DMS_password}
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - DMS_network
+
+volumes:
+  mysql_data:
+
+networks:
+  DMS_network:
