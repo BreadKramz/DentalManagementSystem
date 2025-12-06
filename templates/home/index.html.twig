@@ -6,7 +6,7 @@
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-16">
 
     <!-- Navigation -->
-    <nav id="navbar" class="bg-blue-600 shadow-lg fixed top-0 left-0 right-0 z-50 transition-transform duration-300">
+    <nav id="navbar" class="bg-cyan-700 shadow-lg fixed top-0 left-0 right-0 z-50 transition-transform duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
@@ -16,10 +16,20 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="#" class="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                    <a href="#services" class="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">Services</a>
-                    <a href="#about" class="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">About</a>
-                    <a href="#contact" class="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                    <a href="#" class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <a href="#services" class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium">Services</a>
+                    <a href="#about" class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium">About</a>
+                    <a href="#contact" class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                    {% if app.user %}
+                        <span class="text-white px-3 py-2 text-sm">Welcome, {{ app.user.userIdentifier }}</span>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin_dashboard') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Admin</a>
+                        {% endif %}
+                        <a href="{{ path('app_logout') }}" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Logout</a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium">Login</a>
+                        <a href="{{ path('app_register') }}" class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Sign Up</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -27,13 +37,13 @@
 
     <!-- Hero Section -->
     <section class="relative py-32 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat overflow-hidden" style="background-image: url('/images/hero-teeth.png');">
-        <div class="absolute inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm"></div>
+        <div class="absolute inset-0 bg-slate-900 bg-opacity-60 backdrop-blur-sm"></div>
         <div class="relative max-w-7xl mx-auto">
             <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
                 <div class="flex-1 text-center lg:text-left animate-fade-in-up">
                     <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight drop-shadow-lg">
                         Modern Dental
-                        <span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent drop-shadow-lg">Management</span>
+                        <span class="bg-gradient-to-r from-teal-400 via-cyan-500 to-blue-600 bg-clip-text text-transparent drop-shadow-lg">Management</span>
                         System
                     </h1>
                     <p class="text-lg lg:text-xl text-gray-100 mb-10 max-w-2xl leading-relaxed drop-shadow-md">
@@ -41,17 +51,17 @@
                         appointment scheduling, treatment tracking, and clinic administration.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
-                        <button class="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold py-4 px-10 rounded-xl shadow-2xl transform hover:scale-105 hover:shadow-indigo-500/25 transition-all duration-300">
+                        <button class="bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold py-4 px-10 rounded-xl shadow-2xl transform hover:scale-105 hover:shadow-cyan-500/25 transition-all duration-300">
                             Get Started
                         </button>
-                        <button class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-bold py-4 px-10 rounded-xl shadow-2xl border-2 border-white/40 transform hover:scale-105 transition-all duration-300">
+                        <a href="#about" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-bold py-4 px-10 rounded-xl shadow-2xl border-2 border-white/40 transform hover:scale-105 transition-all duration-300 text-center">
                             Learn More
-                        </button>
+                        </a>
                     </div>
                 </div>
                 <div class="flex-1 animate-slide-in-right relative z-10 flex flex-col items-center lg:items-end">
-                    <img src="/images/Dentist-Me2.png" alt="Dr. Mark Lester J. Real" class="w-72 h-72 rounded-full shadow-2xl border-4 border-white/50 object-cover transform hover:scale-105 transition-transform duration-500" style="box-shadow: 0 0 30px rgba(255,255,255,0.3), 0 0 60px rgba(0,255,255,0.2);">
-                    <div class="bg-black/30 backdrop-blur-sm rounded-lg px-4 py-2 mt-4">
+                    <img src="/images/Dentist-Me2.png" alt="Dr. Mark Lester J. Real" class="w-72 h-72 rounded-full shadow-2xl border-4 border-cyan-300/50 object-cover transform hover:scale-105 transition-transform duration-500" style="box-shadow: 0 0 30px rgba(255,255,255,0.3), 0 0 60px rgba(0,255,255,0.3);">
+                    <div class="bg-slate-800/40 backdrop-blur-sm rounded-lg px-4 py-2 mt-4">
                         <p class="text-white text-xl font-bold text-center drop-shadow-lg">Dr. Mark Lester J. Real</p>
                         <p class="text-cyan-200 text-base font-medium text-center">Dental Professional</p>
                     </div>
@@ -62,172 +72,172 @@
     </section>
 
     <!-- Services Section -->
-    <section id="services" class="py-8 bg-white">
+    <section id="services" class="py-8 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-6">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Our Services</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                    Everything you need to manage your dental practice efficiently
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Our Dental Services</h2>
+                <p class="text-base text-gray-600 max-w-2xl mx-auto">
+                    Professional dental treatments and procedures we provide to ensure your oral health
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Service 1 -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up border border-gray-100">
-                    <div class="bg-gradient-to-br from-blue-500 to-indigo-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        📅
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up border border-cyan-100">
+                    <div class="w-16 h-16 rounded-2xl mb-4 shadow-lg overflow-hidden mx-auto">
+                        <img src="/images/braces.png" alt="Braces" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Appointment Scheduling</h3>
-                    <p class="text-gray-600 leading-relaxed">Easy-to-use calendar system for managing patient appointments and staff schedules with automated reminders.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">Braces</h3>
+                    <p class="text-gray-600 leading-relaxed text-center text-sm">Orthodontic treatment to straighten teeth and improve your smile with modern techniques.</p>
                 </div>
 
                 <!-- Service 2 -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up delay-200 border border-gray-100">
-                    <div class="bg-gradient-to-br from-green-500 to-emerald-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        👥
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up border border-cyan-100">
+                    <div class="w-16 h-16 rounded-2xl mb-4 shadow-lg overflow-hidden mx-auto">
+                        <img src="/images/tooth-extraction.png" alt="Tooth Extraction" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Patient Management</h3>
-                    <p class="text-gray-600 leading-relaxed">Comprehensive patient records with medical history, treatment plans, and contact information in one place.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">Tooth Extraction</h3>
+                    <p class="text-gray-600 leading-relaxed text-center text-sm">Safe and painless removal of damaged or problematic teeth with expert care.</p>
                 </div>
 
                 <!-- Service 3 -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up delay-400 border border-gray-100">
-                    <div class="bg-gradient-to-br from-purple-500 to-violet-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        📊
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up border border-cyan-100">
+                    <div class="w-16 h-16 rounded-2xl mb-4 shadow-lg overflow-hidden mx-auto">
+                        <img src="/images/dental-filling.png" alt="Dental Filling" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Reports & Analytics</h3>
-                    <p class="text-gray-600 leading-relaxed">Generate detailed reports on clinic performance, revenue, and patient statistics with visual dashboards.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">Dental Filling</h3>
+                    <p class="text-gray-600 leading-relaxed text-center text-sm">Restoration of cavities with high-quality, durable materials for long-lasting results.</p>
                 </div>
 
                 <!-- Service 4 -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up delay-600 border border-gray-100">
-                    <div class="bg-gradient-to-br from-orange-500 to-red-500 text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        💳
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up border border-cyan-100">
+                    <div class="w-16 h-16 rounded-2xl mb-4 shadow-lg overflow-hidden mx-auto">
+                        <img src="/images/dental-cleaning.png" alt="Dental Cleaning" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Billing & Insurance</h3>
-                    <p class="text-gray-600 leading-relaxed">Integrated billing system with insurance claim processing and automated payment tracking.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">Dental Cleaning</h3>
+                    <p class="text-gray-600 leading-relaxed text-center text-sm">Professional teeth cleaning and polishing to prevent gum disease and maintain oral health.</p>
                 </div>
 
                 <!-- Service 5 -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up delay-200 border border-gray-100">
-                    <div class="bg-gradient-to-br from-pink-500 to-rose-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        🖼️
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up border border-cyan-100">
+                    <div class="w-16 h-16 rounded-2xl mb-4 shadow-lg overflow-hidden mx-auto">
+                        <img src="/images/root-canal-treatment.png" alt="Root Canal Treatment" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Imaging Integration</h3>
-                    <p class="text-gray-600 leading-relaxed">Store and manage dental images, X-rays, and treatment progress photos with cloud storage.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">Root Canal Treatment</h3>
+                    <p class="text-gray-600 leading-relaxed text-center text-sm">Advanced treatment to save infected teeth by removing pulp and restoring function.</p>
                 </div>
 
                 <!-- Service 6 -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up delay-400 border border-gray-100">
-                    <div class="bg-gradient-to-br from-teal-500 to-cyan-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        🔒
+                <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up border border-cyan-100">
+                    <div class="w-16 h-16 rounded-2xl mb-4 shadow-lg overflow-hidden mx-auto">
+                        <img src="/images/dental-implants.png" alt="Dental Implants" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Secure & Compliant</h3>
-                    <p class="text-gray-600 leading-relaxed">HIPAA compliant with advanced security features and encrypted data protection.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">Dental Implants</h3>
+                    <p class="text-gray-600 leading-relaxed text-center text-sm">Permanent replacement of missing teeth with titanium implants for natural-looking results.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- About Section -->
-    <section id="about" class="py-8 bg-gray-50">
+    <section id="about" class="py-6 bg-cyan-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
                 <div class="animate-slide-in-left">
-                    <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">Why Choose DenSyst?</h2>
-                    <p class="text-xl text-gray-600 mb-4 leading-relaxed">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3 leading-tight">Why Choose DenSyst?</h2>
+                    <p class="text-lg text-gray-600 mb-3 leading-relaxed">
                         DenSyst is designed specifically for dental practices, combining modern technology with
                         user-friendly interfaces to help you focus on what matters most - your patients.
                     </p>
-                    <ul class="space-y-2">
-                        <li class="flex items-center p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-l-4 border-green-500">
-                            <div class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 text-sm shadow-lg">✓</div>
-                            <span class="text-gray-800 font-medium">Intuitive and easy to use</span>
+                    <ul class="space-y-1">
+                        <li class="flex items-center p-2 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl border-l-4 border-teal-500">
+                            <div class="bg-teal-500 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 text-xs shadow-lg">🦷</div>
+                            <span class="text-gray-800 font-medium text-sm">Intuitive and easy to use</span>
                         </li>
-                        <li class="flex items-center p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-l-4 border-blue-500">
-                            <div class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 text-sm shadow-lg">✓</div>
-                            <span class="text-gray-800 font-medium">Cloud-based with secure data storage</span>
+                        <li class="flex items-center p-2 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl border-l-4 border-cyan-500">
+                            <div class="bg-cyan-500 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 text-xs shadow-lg">☁️</div>
+                            <span class="text-gray-800 font-medium text-sm">Cloud-based with secure data storage</span>
                         </li>
-                        <li class="flex items-center p-3 bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl border-l-4 border-purple-500">
-                            <div class="bg-purple-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 text-sm shadow-lg">✓</div>
-                            <span class="text-gray-800 font-medium">24/7 technical support</span>
+                        <li class="flex items-center p-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-l-4 border-blue-500">
+                            <div class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 text-xs shadow-lg">🛠️</div>
+                            <span class="text-gray-800 font-medium text-sm">24/7 technical support</span>
                         </li>
-                        <li class="flex items-center p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl border-l-4 border-orange-500">
-                            <div class="bg-orange-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 text-sm shadow-lg">✓</div>
-                            <span class="text-gray-800 font-medium">Regular updates and new features</span>
+                        <li class="flex items-center p-2 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border-l-4 border-indigo-500">
+                            <div class="bg-indigo-500 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 text-xs shadow-lg">🔄</div>
+                            <span class="text-gray-800 font-medium text-sm">Regular updates and new features</span>
                         </li>
                     </ul>
                 </div>
-                <div class="bg-gradient-to-br from-white to-gray-50 p-6 rounded-3xl shadow-2xl animate-slide-in-right border border-gray-100">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Ready to Get Started?</h3>
-                    <p class="text-lg text-gray-600 mb-6 leading-relaxed">
+                <div class="bg-gradient-to-br from-cyan-50 to-blue-50 p-4 rounded-3xl shadow-2xl animate-slide-in-right border border-cyan-200">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Ready to Get Started?</h3>
+                    <p class="text-base text-gray-600 mb-4 leading-relaxed">
                         Join thousands of dental practices already using DenSyst to streamline their operations and improve patient care.
                     </p>
-                    <button class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <a href="{{ path('app_register') }}" class="w-full bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold py-2 px-4 rounded-xl shadow-xl transform hover:scale-105 transition-all duration-300 text-center block">
                         Sign Up Now
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-8 bg-white">
+    <section id="contact" class="py-6 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-6">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Contact Us</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            <div class="text-center mb-4">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Contact Us</h2>
+                <p class="text-base text-gray-600 max-w-2xl mx-auto">
                     Get in touch with us for any questions or to start your dental practice management journey.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-gray-50 p-6 rounded-2xl shadow-lg">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Get In Touch</h3>
-                    <div class="space-y-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-2xl shadow-lg border border-cyan-100">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Get In Touch</h3>
+                    <div class="space-y-2">
                         <div class="flex items-center">
-                            <div class="bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center mr-3">
+                            <div class="bg-cyan-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2">
                                 📧
                             </div>
                             <div>
-                                <p class="font-semibold text-gray-900">Email</p>
-                                <p class="text-gray-600">breadkramz@gmail.com</p>
+                                <p class="font-semibold text-gray-900 text-sm">Email</p>
+                                <p class="text-gray-600 text-sm">breadkramz@gmail.com</p>
                             </div>
                         </div>
                         <div class="flex items-center">
-                            <div class="bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center mr-3">
+                            <div class="bg-cyan-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2">
                                 📞
                             </div>
                             <div>
-                                <p class="font-semibold text-gray-900">Phone</p>
-                                <p class="text-gray-600">09456057652</p>
+                                <p class="font-semibold text-gray-900 text-sm">Phone</p>
+                                <p class="text-gray-600 text-sm">09456057652</p>
                             </div>
                         </div>
                         <div class="flex items-center">
-                            <div class="bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center mr-3">
+                            <div class="bg-cyan-500 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2">
                                 🏢
                             </div>
                             <div>
-                                <p class="font-semibold text-gray-900">Address</p>
-                                <p class="text-gray-600">Negros Oriental State University</p>
+                                <p class="font-semibold text-gray-900 text-sm">Address</p>
+                                <p class="text-gray-600 text-sm">Negros Oriental State University</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-gray-50 p-6 rounded-2xl shadow-lg">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Send us a Message</h3>
-                    <form class="space-y-3">
+                <div class="bg-white p-4 rounded-2xl shadow-lg border border-cyan-100">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Send us a Message</h3>
+                    <form class="space-y-2">
                         <div>
-                            <input type="text" placeholder="Your Name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <input type="text" placeholder="Your Name" class="w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-sm">
                         </div>
                         <div>
-                            <input type="email" placeholder="Your Email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <input type="email" placeholder="Your Email" class="w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-sm">
                         </div>
                         <div>
-                            <textarea rows="3" placeholder="Your Message" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                            <textarea rows="2" placeholder="Your Message" class="w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-sm"></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300">
+                        <button type="submit" class="w-full bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold py-1.5 px-3 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-sm">
                             Send Message
                         </button>
                     </form>
@@ -237,34 +247,34 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-8">
+    <footer class="bg-slate-800 text-white py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <div class="flex items-center mb-3">
-                        <img src="/images/densyst-logo.png" alt="DenSyst Logo" class="h-10 w-10 mr-2">
-                        <span class="text-xl font-bold text-white">DenSyst</span>
+                    <div class="flex items-center mb-2">
+                        <img src="/images/densyst-logo.png" alt="DenSyst Logo" class="h-8 w-8 mr-2">
+                        <span class="text-lg font-bold text-white">DenSyst</span>
                     </div>
-                    <p class="text-gray-400 text-sm">
+                    <p class="text-slate-300 text-xs">
                         Modern dental management system for the digital age.
                     </p>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold mb-3">Quick Links</h4>
-                    <ul class="space-y-1">
-                        <li><a href="#services" class="text-gray-400 hover:text-white text-sm">Services</a></li>
-                        <li><a href="#about" class="text-gray-400 hover:text-white text-sm">About</a></li>
-                        <li><a href="#contact" class="text-gray-400 hover:text-white text-sm">Contact</a></li>
+                    <h4 class="text-base font-semibold mb-2 text-cyan-300">Quick Links</h4>
+                    <ul class="space-y-0.5">
+                        <li><a href="#services" class="text-slate-300 hover:text-cyan-300 text-xs transition-colors">Services</a></li>
+                        <li><a href="#about" class="text-slate-300 hover:text-cyan-300 text-xs transition-colors">About</a></li>
+                        <li><a href="#contact" class="text-slate-300 hover:text-cyan-300 text-xs transition-colors">Contact</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold mb-3">Contact Info</h4>
-                    <p class="text-gray-400 text-sm">Email: breadkramz@gmail.com</p>
-                    <p class="text-gray-400 text-sm">Phone: 09456057652</p>
+                    <h4 class="text-base font-semibold mb-2 text-cyan-300">Contact Info</h4>
+                    <p class="text-slate-300 text-xs">Email: breadkramz@gmail.com</p>
+                    <p class="text-slate-300 text-xs">Phone: 09456057652</p>
                 </div>
             </div>
-            <div class="border-t border-gray-800 mt-6 pt-6 text-center">
-                <p class="text-gray-400 text-sm">&copy; 2025 DenSyst. Made by Mark Real.</p>
+            <div class="border-t border-slate-700 mt-4 pt-4 text-center">
+                <p class="text-slate-300 text-xs">&copy; 2025 DenSyst. Made by Mark Real.</p>
             </div>
         </div>
     </footer>

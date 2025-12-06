@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
+    <!-- Navigation -->
+    <nav id="navbar" class="bg-slate-800 shadow-lg fixed top-0 left-0 right-0 z-50 transition-transform duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center space-x-2">
+                        <img src="/images/densyst-logo.png" alt="DenSyst Logo" class="h-10 w-auto">
+                        <span class="text-white text-xl font-bold">Admin Dashboard</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-cyan-100">Welcome, {{ app.user.userIdentifier }}</span>
+                    <a href="{{ path('app_logout') }}" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center animate-fade-in-up">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
+                    Admin
+                    <span class="bg-gradient-to-r from-slate-700 to-cyan-600 bg-clip-text text-transparent">Dashboard</span>
+                </h1>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Manage users, appointments, and oversee all dental practice operations from your centralized admin panel.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Content -->
+    <section class="pb-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <!-- User Management -->
+                <div class="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up border border-slate-200">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-slate-600 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            👥
+                        </div>
+                        <div class="ml-6">
+                            <h3 class="text-3xl font-bold text-gray-900">1,234</h3>
+                            <p class="text-gray-600">Total Users</p>
+                        </div>
+                    </div>
+                    <a href="#" class="text-slate-600 hover:text-cyan-600 font-semibold transition-colors">View all users →</a>
+                </div>
+
+                <!-- Appointments -->
+                <div class="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up delay-200 border border-slate-200">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-cyan-600 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            📅
+                        </div>
+                        <div class="ml-6">
+                            <h3 class="text-3xl font-bold text-gray-900">567</h3>
+                            <p class="text-gray-600">Total Appointments</p>
+                        </div>
+                    </div>
+                    <a href="#" class="text-slate-600 hover:text-cyan-600 font-semibold transition-colors">Manage appointments →</a>
+                </div>
+
+                <!-- Reports -->
+                <div class="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up delay-400 border border-slate-200">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-teal-600 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            📊
+                        </div>
+                        <div class="ml-6">
+                            <h3 class="text-3xl font-bold text-gray-900">89</h3>
+                            <p class="text-gray-600">Reports Generated</p>
+                        </div>
+                    </div>
+                    <a href="#" class="text-slate-600 hover:text-cyan-600 font-semibold transition-colors">View reports →</a>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-slate-200">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Recent Activity</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-l-4 border-green-500">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                                ✓
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900">New user registration</p>
+                                <p class="text-sm text-gray-600">User john@example.com registered</p>
+                            </div>
+                        </div>
+                        <span class="text-sm text-gray-500">2 hours ago</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border-l-4 border-blue-500">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mr-4 text-white">
+                                📅
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900">Appointment booked</p>
+                                <p class="text-sm text-gray-600">Appointment scheduled for tomorrow</p>
+                            </div>
+                        </div>
+                        <span class="text-sm text-gray-500">4 hours ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
