@@ -7,6 +7,7 @@ use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AdminController extends AbstractController
 {
     #[Route('/', name: 'admin_dashboard')]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
     public function dashboard(UserRepository $userRepository): Response
     {
         return $this->render('admin/dashboard.html.twig', [
@@ -26,7 +27,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users', name: 'admin_users')]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
     public function users(UserRepository $userRepository): Response
     {
         return $this->render('admin/users/index.html.twig', [
@@ -35,7 +36,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users/new', name: 'admin_users_new')]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
     public function newUser(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
@@ -56,7 +57,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users/{id}/edit', name: 'admin_users_edit')]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
     public function editUser(User $user, Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(UserType::class, $user, ['require_password' => false]);
@@ -78,7 +79,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users/{id}/delete', name: 'admin_users_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
     public function deleteUser(User $user, EntityManagerInterface $entityManager, Request $request): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {

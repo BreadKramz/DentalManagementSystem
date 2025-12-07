@@ -12,7 +12,7 @@ class LandingPageController extends AbstractController
     public function index(): Response
     {
         if ($this->getUser()) {
-            if ($this->isGranted('ROLE_ADMIN')) {
+            if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_STAFF')) {
                 return $this->redirectToRoute('admin_dashboard');
             } else {
                 return $this->redirectToRoute('user_dashboard');

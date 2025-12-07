@@ -32,6 +32,7 @@ class CreateUserCommand extends Command
             ->addArgument('email', InputArgument::REQUIRED, 'User email')
             ->addArgument('password', InputArgument::REQUIRED, 'User password')
             ->addOption('admin', null, InputOption::VALUE_NONE, 'Make user an admin')
+            ->addOption('staff', null, InputOption::VALUE_NONE, 'Make user a staff member')
         ;
     }
 
@@ -41,10 +42,20 @@ class CreateUserCommand extends Command
         $email = $input->getArgument('email');
         $password = $input->getArgument('password');
         $isAdmin = $input->getOption('admin');
+        $isStaff = $input->getOption('staff');
 
         $user = new User();
         $user->setEmail($email);
-        $user->setRoles($isAdmin ? ['ROLE_ADMIN'] : ['ROLE_USER']);
+        if ($isAdmin) {
+            $user->setRoles(['ROLE_ADMIN']);
+            $role = 'ADMIN';
+        } elseif ($isStaff) {
+            $user->setRoles(['ROLE_STAFF']);
+            $role = 'STAFF';
+        } else {
+            $user->setRoles(['ROLE_USER']);
+            $role = 'USER';
+        }
 
         $hashedPassword = $this->userPasswordHasher->hashPassword($user, $password);
         $user->setPassword($hashedPassword);
@@ -52,7 +63,7 @@ class CreateUserCommand extends Command
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $io->success(sprintf('User %s created successfully with role %s', $email, $isAdmin ? 'ADMIN' : 'USER'));
+        $io->success(sprintf('User %s created successfully with role %s', $email, $role));
 
         return Command::SUCCESS;
     }

@@ -23,6 +23,7 @@ class UserType extends AbstractType
                 'label' => 'Role',
                 'choices' => [
                     'User' => 'ROLE_USER',
+                    'Staff' => 'ROLE_STAFF',
                     'Admin' => 'ROLE_ADMIN',
                 ],
                 'multiple' => true,
