@@ -22,6 +22,10 @@
                 User Management
             </a>
             {% endif %}
+            <a href="{{ path('admin_products') }}" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-slate-700 hover:text-white transition-colors {{ app.request.attributes.get('_route') starts with 'admin_products' ? 'bg-slate-700 text-white' : '' }}">
+                <span class="w-5 h-5 mr-3">📦</span>
+                Product Management
+            </a>
             <a href="#" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-slate-700 hover:text-white transition-colors">
                 <span class="w-5 h-5 mr-3">📅</span>
                 Appointments

@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,10 +21,11 @@ class AdminController extends AbstractController
 {
     #[Route('/', name: 'admin_dashboard')]
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
-    public function dashboard(UserRepository $userRepository): Response
+    public function dashboard(UserRepository $userRepository, ProductRepository $productRepository): Response
     {
         return $this->render('admin/dashboard.html.twig', [
             'users' => $userRepository->findAll(),
+            'products' => $productRepository->findAll(),
         ]);
     }
 

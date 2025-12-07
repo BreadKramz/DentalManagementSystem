@@ -52,15 +52,16 @@
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">User</span>
                         {% endif %}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <a href="{{ path('admin_users_edit', {'id': user.id}) }}" class="text-cyan-600 hover:text-cyan-900">Edit</a>
-                        {% if user != app.user %}
-                        <span class="text-gray-300">|</span>
-                        <form method="post" action="{{ path('admin_users_delete', {'id': user.id}) }}" class="delete-form">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-                            <button type="button" class="delete-btn text-red-600 hover:text-red-900">Delete</button>
-                        </form>
-                        {% endif %}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex items-center space-x-4">
+                            <a href="{{ path('admin_users_edit', {'id': user.id}) }}" class="text-cyan-600 hover:text-cyan-900 transition-colors">Edit</a>
+                            {% if user != app.user %}
+                            <form method="post" action="{{ path('admin_users_delete', {'id': user.id}) }}" class="delete-form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                <button type="button" class="delete-btn text-red-600 hover:text-red-900 transition-colors">Delete</button>
+                            </form>
+                            {% endif %}
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
