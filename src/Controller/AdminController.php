@@ -27,7 +27,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users', name: 'admin_users')]
-    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
+    #[IsGranted('ROLE_ADMIN')]
     public function users(UserRepository $userRepository): Response
     {
         return $this->render('admin/users/index.html.twig', [
@@ -36,7 +36,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users/new', name: 'admin_users_new')]
-    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
+    #[IsGranted('ROLE_ADMIN')]
     public function newUser(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
@@ -57,7 +57,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users/{id}/edit', name: 'admin_users_edit')]
-    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
+    #[IsGranted('ROLE_ADMIN')]
     public function editUser(User $user, Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(UserType::class, $user, ['require_password' => false]);
@@ -79,7 +79,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users/{id}/delete', name: 'admin_users_delete', methods: ['POST'])]
-    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteUser(User $user, EntityManagerInterface $entityManager, Request $request): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
