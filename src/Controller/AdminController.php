@@ -37,7 +37,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/appointments', name: 'admin_appointments', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
     public function appointments(AppointmentRepository $appointmentRepository): Response
     {
         return $this->render('admin/appointments/index.html.twig', [
