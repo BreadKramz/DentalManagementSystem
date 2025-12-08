@@ -7,19 +7,20 @@ use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/products')]
-final class ProductController extends AbstractController
+class ProductController extends AbstractController
 {
-    #[Route('/', name: 'admin_products')]
-    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
+    #[Route('/', name: 'admin_products', methods: ['GET'])]
     public function index(ProductRepository $productRepository): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_STAFF')) {
+            throw $this->createAccessDeniedException('Access denied. Admin or Staff role required.');
+        }
+
         $products = $this->isGranted('ROLE_ADMIN') ? $productRepository->findAll() : $productRepository->findBy(['createdBy' => $this->getUser()]);
 
         return $this->render('admin/products/index.html.twig', [
@@ -27,10 +28,13 @@ final class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'admin_products_new')]
-    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
+    #[Route('/new', name: 'admin_products_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_STAFF')) {
+            throw $this->createAccessDeniedException('Access denied. Admin or Staff role required.');
+        }
+
         $product = new Product();
         $product->setCreatedBy($this->getUser());
         $form = $this->createForm(ProductType::class, $product);
@@ -40,7 +44,16 @@ final class ProductController extends AbstractController
             $entityManager->persist($product);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Product created successfully.');
+            // Log the create action
+            $log = new \App\Entity\ActivityLog();
+            $log->setUser($this->getUser());
+            $log->setRole(implode(', ', $this->getUser()->getRoles()));
+            $log->setAction('CREATE Product');
+            $log->setEntityType('Product');
+            $log->setEntityId($product->getId());
+            $entityManager->persist($log);
+            $entityManager->flush();
+
             return $this->redirectToRoute('admin_products', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -50,18 +63,25 @@ final class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'admin_products_show')]
-    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
+    #[Route('/{id}', name: 'admin_products_show', methods: ['GET'])]
     public function show(Product $product): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_STAFF')) {
+            throw $this->createAccessDeniedException('Access denied. Admin or Staff role required.');
+        }
+
         return $this->render('admin/products/show.html.twig', [
             'product' => $product,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'admin_products_edit')]
+    #[Route('/{id}/edit', name: 'admin_products_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_STAFF')) {
+            throw $this->createAccessDeniedException('Access denied. Admin or Staff role required.');
+        }
+
         // Staff can only edit their own products
         if ($this->isGranted('ROLE_STAFF') && $product->getCreatedBy() !== $this->getUser()) {
             throw $this->createAccessDeniedException('You can only edit your own products.');
@@ -73,7 +93,16 @@ final class ProductController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            $this->addFlash('success', 'Product updated successfully.');
+            // Log the update action
+            $log = new \App\Entity\ActivityLog();
+            $log->setUser($this->getUser());
+            $log->setRole(implode(', ', $this->getUser()->getRoles()));
+            $log->setAction('UPDATE Product');
+            $log->setEntityType('Product');
+            $log->setEntityId($product->getId());
+            $entityManager->persist($log);
+            $entityManager->flush();
+
             return $this->redirectToRoute('admin_products', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -86,11 +115,17 @@ final class ProductController extends AbstractController
     #[Route('/{id}', name: 'admin_products_delete', methods: ['POST'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete_product', $request->request->get('_token'))) {
-            $entityManager->remove($product);
-            $entityManager->flush();
+        if (!$this->isGranted('ROLE_ADMIN') && !$this->isGranted('ROLE_STAFF')) {
+            throw $this->createAccessDeniedException('Access denied. Admin or Staff role required.');
+        }
 
-            // Log the delete action
+        // Staff can only delete their own products
+        if ($this->isGranted('ROLE_STAFF') && $product->getCreatedBy() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('You can only delete your own products.');
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
+            // Log the delete action before removing
             $log = new \App\Entity\ActivityLog();
             $log->setUser($this->getUser());
             $log->setRole(implode(', ', $this->getUser()->getRoles()));
@@ -98,9 +133,9 @@ final class ProductController extends AbstractController
             $log->setEntityType('Product');
             $log->setEntityId($product->getId());
             $entityManager->persist($log);
-            $entityManager->flush();
 
-            $this->addFlash('success', 'Product deleted successfully.');
+            $entityManager->remove($product);
+            $entityManager->flush();
         }
 
         return $this->redirectToRoute('admin_products', [], Response::HTTP_SEE_OTHER);

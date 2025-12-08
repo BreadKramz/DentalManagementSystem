@@ -1,0 +1,62 @@
+{% extends 'user/base.html.twig' %}
+
+{% block title %}My Appointments{% endblock %}
+
+{% block page_title %}My Appointments{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Appointments List -->
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-900">My Appointments</h1>
+            <a href="{{ path('user_appointments_book') }}" class="bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                Book New Appointment
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for appointment in appointments %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ appointment.service }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ appointment.appointmentDate|date('M j, Y') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ appointment.timeSlot }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if appointment.status == 'pending' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>
+                            {% elseif appointment.status == 'confirmed' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Confirmed</span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ appointment.status|title }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex items-center space-x-4">
+                                {% if appointment.status == 'pending' %}
+                                <a href="{{ path('user_appointments_edit', {'id': appointment.id}) }}" class="text-cyan-600 hover:text-cyan-900 transition-colors">Edit</a>
+                                <form method="post" action="{{ path('user_appointments_cancel', {'id': appointment.id}) }}" onsubmit="return confirm('Are you sure you want to cancel this appointment?')" style="display: inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ appointment.id) }}">
+                                    <button type="submit" class="text-red-600 hover:text-red-900 transition-colors">Cancel</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

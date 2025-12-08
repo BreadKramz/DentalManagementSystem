@@ -1,0 +1,109 @@
+{% extends 'user/base.html.twig' %}
+
+{% block title %}Book Appointment{% endblock %}
+
+{% block page_title %}Book Appointment{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+    <!-- Services Section -->
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Our Dental Services</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for service in services %}
+            <div class="bg-gradient-to-br from-cyan-50 to-blue-50 p-6 rounded-xl border border-cyan-200 hover:shadow-lg transition-shadow cursor-pointer service-card" data-service="{{ service }}">
+                <div class="w-16 h-16 rounded-2xl mb-4 shadow-lg overflow-hidden mx-auto">
+                    {% if service == 'Braces' %}
+                        <img src="/images/braces.png" alt="Braces" class="w-full h-full object-cover">
+                    {% elseif service == 'Tooth Extraction' %}
+                        <img src="/images/tooth-extraction.png" alt="Tooth Extraction" class="w-full h-full object-cover">
+                    {% elseif service == 'Dental Filling' %}
+                        <img src="/images/dental-filling.png" alt="Dental Filling" class="w-full h-full object-cover">
+                    {% elseif service == 'Dental Cleaning' %}
+                        <img src="/images/dental-cleaning.png" alt="Dental Cleaning" class="w-full h-full object-cover">
+                    {% elseif service == 'Root Canal Treatment' %}
+                        <img src="/images/root-canal-treatment.png" alt="Root Canal Treatment" class="w-full h-full object-cover">
+                    {% elseif service == 'Dental Implants' %}
+                        <img src="/images/dental-implants.png" alt="Dental Implants" class="w-full h-full object-cover">
+                    {% endif %}
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2 text-center">{{ service }}</h3>
+                <p class="text-gray-600 text-center text-sm">Professional dental care service</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Book Your Appointment</h2>
+
+        {% for message in app.flashes('success') %}
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {{ message }}
+        </div>
+        {% endfor %}
+
+        <form method="post" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="service" class="block text-sm font-medium text-gray-700 mb-1">Service</label>
+                    <select id="service" name="service" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500">
+                        <option value="">Select a service</option>
+                        {% for service in services %}
+                        <option value="{{ service }}">{{ service }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input type="date" id="date" name="date" required min="{{ 'tomorrow'|date('Y-m-d') }}" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">Available Time Slots</label>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {% for slot in time_slots %}
+                    <label class="relative">
+                        <input type="radio" name="time_slot" value="{{ slot }}" required class="sr-only peer">
+                        <div class="p-4 border-2 border-gray-200 rounded-lg cursor-pointer peer-checked:border-cyan-500 peer-checked:bg-cyan-50 hover:border-cyan-300 transition-colors text-center">
+                            <span class="text-sm font-medium text-gray-900">{{ slot }}</span>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <a href="{{ path('user_appointments') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-3 rounded-lg font-semibold transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" class="bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    Book Appointment
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.service-card').forEach(card => {
+    card.addEventListener('click', function() {
+        const service = this.dataset.service;
+        document.getElementById('service').value = service;
+
+        // Remove selected class from all cards
+        document.querySelectorAll('.service-card').forEach(c => c.classList.remove('ring-2', 'ring-cyan-500'));
+        // Add to clicked card
+        this.classList.add('ring-2', 'ring-cyan-500');
+    });
+});
+</script>
+{% endblock %}

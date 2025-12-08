@@ -26,24 +26,16 @@
                 <span class="w-5 h-5 mr-3">📦</span>
                 Product Management
             </a>
+            <a href="{{ path('admin_appointments') }}" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-slate-700 hover:text-white transition-colors {{ app.request.attributes.get('_route') starts with 'admin_appointments' ? 'bg-slate-700 text-white' : '' }}">
+                <span class="w-5 h-5 mr-3">📅</span>
+                Appointments
+            </a>
             {% if is_granted('ROLE_ADMIN') %}
             <a href="{{ path('admin_activity_logs') }}" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-slate-700 hover:text-white transition-colors {{ app.request.attributes.get('_route') == 'admin_activity_logs' ? 'bg-slate-700 text-white' : '' }}">
                 <span class="w-5 h-5 mr-3">📋</span>
                 Activity Logs
             </a>
             {% endif %}
-            <a href="#" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-slate-700 hover:text-white transition-colors">
-                <span class="w-5 h-5 mr-3">📅</span>
-                Appointments
-            </a>
-            <a href="#" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-slate-700 hover:text-white transition-colors">
-                <span class="w-5 h-5 mr-3">📈</span>
-                Reports
-            </a>
-            <a href="#" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-slate-700 hover:text-white transition-colors">
-                <span class="w-5 h-5 mr-3">⚙️</span>
-                Settings
-            </a>
         </nav>
 
         <!-- User Profile Section -->

@@ -16,9 +16,13 @@
                 <span class="w-5 h-5 mr-3">📊</span>
                 Dashboard
             </a>
-            <a href="#" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-cyan-600 hover:text-white transition-colors">
+            <a href="{{ path('user_appointments') }}" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-cyan-600 hover:text-white transition-colors {{ app.request.attributes.get('_route') starts with 'user_appointments' ? 'bg-cyan-600 text-white' : '' }}">
                 <span class="w-5 h-5 mr-3">📅</span>
                 My Appointments
+            </a>
+            <a href="{{ path('user_appointments_book') }}" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-cyan-600 hover:text-white transition-colors {{ app.request.attributes.get('_route') == 'user_appointments_book' ? 'bg-cyan-600 text-white' : '' }}">
+                <span class="w-5 h-5 mr-3">📝</span>
+                Book Appointment
             </a>
             <a href="#" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-cyan-600 hover:text-white transition-colors">
                 <span class="w-5 h-5 mr-3">🦷</span>
