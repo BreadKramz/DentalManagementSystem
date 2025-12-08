@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Product;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\ActivityLogRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,9 +24,11 @@ class AdminController extends AbstractController
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
     public function dashboard(UserRepository $userRepository, ProductRepository $productRepository): Response
     {
+        $products = $this->isGranted('ROLE_ADMIN') ? $productRepository->findAll() : $productRepository->findBy(['createdBy' => $this->getUser()]);
+
         return $this->render('admin/dashboard.html.twig', [
             'users' => $userRepository->findAll(),
-            'products' => $productRepository->findAll(),
+            'products' => $products,
         ]);
     }
 
@@ -88,8 +91,27 @@ class AdminController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
             $entityManager->remove($user);
             $entityManager->flush();
+
+            // Log the delete action
+            $log = new \App\Entity\ActivityLog();
+            $log->setUser($this->getUser());
+            $log->setRole(implode(', ', $this->getUser()->getRoles()));
+            $log->setAction('DELETE User');
+            $log->setEntityType('User');
+            $log->setEntityId($user->getId());
+            $entityManager->persist($log);
+            $entityManager->flush();
         }
 
         return $this->redirectToRoute('admin_users');
+    }
+
+    #[Route('/activity-logs', name: 'admin_activity_logs')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function activityLogs(ActivityLogRepository $activityLogRepository): Response
+    {
+        return $this->render('admin/activity_logs/index.html.twig', [
+            'logs' => $activityLogRepository->findBy([], ['dateTime' => 'DESC']),
+        ]);
     }
 }

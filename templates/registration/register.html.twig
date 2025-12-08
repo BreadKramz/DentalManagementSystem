@@ -5,6 +5,11 @@
 {% block body %}
 <div class="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style="background-image: url('/images/hero-background.png');">
     <div class="absolute inset-0 bg-slate-900 bg-opacity-60 backdrop-blur-sm"></div>
+    <div class="absolute top-4 left-4 z-10">
+        <a href="{{ path('app_home') }}" class="text-white hover:text-cyan-200 transition-colors flex items-center">
+            <span class="mr-2">←</span> Back to Home
+        </a>
+    </div>
     <div class="relative max-w-md w-full space-y-6 bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/20">
         <div>
             <div class="mx-auto h-12 w-auto flex justify-center">

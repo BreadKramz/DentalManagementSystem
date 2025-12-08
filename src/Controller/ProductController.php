@@ -20,8 +20,10 @@ final class ProductController extends AbstractController
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
     public function index(ProductRepository $productRepository): Response
     {
+        $products = $this->isGranted('ROLE_ADMIN') ? $productRepository->findAll() : $productRepository->findBy(['createdBy' => $this->getUser()]);
+
         return $this->render('admin/products/index.html.twig', [
-            'products' => $productRepository->findAll(),
+            'products' => $products,
         ]);
     }
 
@@ -84,13 +86,18 @@ final class ProductController extends AbstractController
     #[Route('/{id}', name: 'admin_products_delete', methods: ['POST'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
-        // Staff can only delete their own products
-        if ($this->isGranted('ROLE_STAFF') && $product->getCreatedBy() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('You can only delete your own products.');
-        }
-
-        if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete_product', $request->request->get('_token'))) {
             $entityManager->remove($product);
+            $entityManager->flush();
+
+            // Log the delete action
+            $log = new \App\Entity\ActivityLog();
+            $log->setUser($this->getUser());
+            $log->setRole(implode(', ', $this->getUser()->getRoles()));
+            $log->setAction('DELETE Product');
+            $log->setEntityType('Product');
+            $log->setEntityId($product->getId());
+            $entityManager->persist($log);
             $entityManager->flush();
 
             $this->addFlash('success', 'Product deleted successfully.');
