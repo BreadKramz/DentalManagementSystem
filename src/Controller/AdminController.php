@@ -28,8 +28,22 @@ class AdminController extends AbstractController
     {
         $products = $this->isGranted('ROLE_ADMIN') ? $productRepository->findAll() : $productRepository->findBy(['createdBy' => $this->getUser()]);
 
+        // Filter staff users (only ROLE_STAFF, not ROLE_ADMIN)
+        $allUsers = $userRepository->findAll();
+        $staffUsers = array_filter($allUsers, function($user) {
+            return in_array('ROLE_STAFF', $user->getRoles()) && !in_array('ROLE_ADMIN', $user->getRoles());
+        });
+
+        // Filter regular users (only ROLE_USER, not admin or staff)
+        $regularUsers = array_filter($allUsers, function($user) {
+            $roles = $user->getRoles();
+            return in_array('ROLE_USER', $roles) && !in_array('ROLE_ADMIN', $roles) && !in_array('ROLE_STAFF', $roles);
+        });
+
         return $this->render('admin/dashboard.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $allUsers,
+            'staff_count' => count($staffUsers),
+            'regular_users_count' => count($regularUsers),
             'products' => $products,
             'logs_count' => count($activityLogRepository->findAll()),
             'appointments_count' => count($appointmentRepository->findAll()),

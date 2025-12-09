@@ -16,6 +16,10 @@
                 <span class="w-5 h-5 mr-3">📊</span>
                 Dashboard
             </a>
+            <a href="{{ path('user_profile') }}" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-slate-700 hover:text-white transition-colors {{ app.request.attributes.get('_route') starts with 'user_profile' ? 'bg-slate-700 text-white' : '' }}">
+                <span class="w-5 h-5 mr-3">👤</span>
+                My Profile
+            </a>
             {% if is_granted('ROLE_ADMIN') %}
             <a href="{{ path('admin_users') }}" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-slate-700 hover:text-white transition-colors {{ app.request.attributes.get('_route') starts with 'admin_users' ? 'bg-slate-700 text-white' : '' }}">
                 <span class="w-5 h-5 mr-3">👥</span>

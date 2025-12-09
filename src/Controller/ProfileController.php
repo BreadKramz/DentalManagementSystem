@@ -24,6 +24,11 @@ class ProfileController extends AbstractController
     #[Route('/', name: 'user_profile')]
     public function index(): Response
     {
+        // Check if user is admin or staff, if so use admin template
+        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_STAFF')) {
+            return $this->render('admin/profile.html.twig');
+        }
+        
         return $this->render('user/profile/index.html.twig');
     }
 
@@ -68,7 +73,13 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('user_profile');
         }
 
-        return $this->render('user/profile/edit.html.twig', [
+        // Check if user is admin or staff, if so use admin template
+        $template = 'user/profile/edit.html.twig';
+        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_STAFF')) {
+            $template = 'admin/profile_edit.html.twig';
+        }
+
+        return $this->render($template, [
             'form' => $form->createView(),
             'user' => $user,
         ]);
