@@ -7,15 +7,17 @@
         <!-- Logo Section -->
         <div class="flex items-center justify-center h-16 bg-slate-900 border-b border-slate-700">
             <img src="/images/densyst-logo.png" alt="DenSyst Logo" class="h-8 w-auto">
-            <span class="ml-2 text-white text-lg font-bold">Admin</span>
+            <span class="ml-2 text-white text-lg font-bold">{% if is_granted('ROLE_ADMIN') %}Admin{% else %}Staff{% endif %}</span>
         </div>
 
         <!-- Navigation Menu -->
         <nav class="flex-1 px-4 py-6 space-y-2">
+            {% if is_granted('ROLE_ADMIN') %}
             <a href="{{ path('admin_dashboard') }}" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-slate-700 hover:text-white transition-colors {{ app.request.attributes.get('_route') == 'admin_dashboard' ? 'bg-slate-700 text-white' : '' }}">
                 <span class="w-5 h-5 mr-3">📊</span>
                 Dashboard
             </a>
+            {% endif %}
             <a href="{{ path('user_profile') }}" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-slate-700 hover:text-white transition-colors {{ app.request.attributes.get('_route') starts with 'user_profile' ? 'bg-slate-700 text-white' : '' }}">
                 <span class="w-5 h-5 mr-3">👤</span>
                 My Profile
@@ -50,7 +52,7 @@
                 </div>
                 <div class="ml-3">
                     <p class="text-cyan-100 text-sm font-medium">{{ app.user.userIdentifier }}</p>
-                    <p class="text-cyan-300 text-xs">Administrator</p>
+                    <p class="text-cyan-300 text-xs">{% if is_granted('ROLE_ADMIN') %}Administrator{% else %}Staff{% endif %}</p>
                 </div>
             </div>
             <a href="{{ path('app_logout') }}" class="flex items-center px-4 py-2 text-red-400 rounded-lg hover:bg-red-600 hover:text-white transition-colors">
@@ -64,7 +66,7 @@
     <div class="flex-1 flex flex-col" style="margin-left: 16rem;">
         <!-- Top Header -->
         <header class="bg-white shadow-sm h-16 flex items-center justify-between px-6 border-b border-gray-200">
-            <h1 class="text-2xl font-bold text-gray-900">{% block page_title %}Dashboard{% endblock %}</h1>
+            <h1 class="text-2xl font-bold text-gray-900">{% block page_title %}{% if is_granted('ROLE_ADMIN') %}Dashboard{% else %}Profile{% endif %}{% endblock %}</h1>
             <div class="text-sm text-gray-600">
                 Welcome back, {{ app.user.userIdentifier }}
             </div>

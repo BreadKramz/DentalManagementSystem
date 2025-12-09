@@ -23,10 +23,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AdminController extends AbstractController
 {
     #[Route('/', name: 'admin_dashboard')]
-    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_STAFF")'))]
+    #[IsGranted('ROLE_ADMIN')]
     public function dashboard(UserRepository $userRepository, ProductRepository $productRepository, ActivityLogRepository $activityLogRepository, AppointmentRepository $appointmentRepository): Response
     {
-        $products = $this->isGranted('ROLE_ADMIN') ? $productRepository->findAll() : $productRepository->findBy(['createdBy' => $this->getUser()]);
+        $products = $productRepository->findAll();
 
         // Filter staff users (only ROLE_STAFF, not ROLE_ADMIN)
         $allUsers = $userRepository->findAll();
