@@ -45,10 +45,7 @@
                             <div class="flex items-center space-x-4">
                                 {% if appointment.status == 'pending' %}
                                 <a href="{{ path('user_appointments_edit', {'id': appointment.id}) }}" class="text-cyan-600 hover:text-cyan-900 transition-colors">Edit</a>
-                                <form method="post" action="{{ path('user_appointments_cancel', {'id': appointment.id}) }}" onsubmit="return confirm('Are you sure you want to cancel this appointment?')" style="display: inline;">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ appointment.id) }}">
-                                    <button type="submit" class="text-red-600 hover:text-red-900 transition-colors">Cancel</button>
-                                </form>
+                                <button type="button" onclick="openCancelModal({{ appointment.id }}, '{{ csrf_token('cancel' ~ appointment.id) }}')" class="text-red-600 hover:text-red-900 transition-colors">Cancel</button>
                                 {% endif %}
                             </div>
                         </td>
@@ -59,4 +56,54 @@
         </div>
     </div>
 </div>
+
+<!-- Cancel Confirmation Modal -->
+<div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Confirm Cancel</h3>
+                <p class="text-gray-600 mb-6">Are you sure you want to cancel this appointment? This action cannot be undone.</p>
+                <form id="cancelForm" method="post" data-turbo="false">
+                    <input type="hidden" name="_token" id="cancelToken">
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeCancelModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            Keep Appointment
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                            Cancel Appointment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openCancelModal(appointmentId, csrfToken) {
+    const modal = document.getElementById('cancelModal');
+    const cancelForm = document.getElementById('cancelForm');
+    const cancelToken = document.getElementById('cancelToken');
+    
+    // Set the form action and token
+    cancelForm.action = `/user/appointments/${appointmentId}/cancel`;
+    cancelToken.value = csrfToken;
+    
+    // Show the modal
+    modal.classList.remove('hidden');
+}
+
+function closeCancelModal() {
+    const modal = document.getElementById('cancelModal');
+    modal.classList.add('hidden');
+}
+
+// Close modal when clicking outside
+document.getElementById('cancelModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeCancelModal();
+    }
+});
+</script>
 {% endblock %}

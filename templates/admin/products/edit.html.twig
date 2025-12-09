@@ -49,15 +49,62 @@
         {% if product.createdBy == app.user or is_granted('ROLE_ADMIN') %}
         <div class="mt-8 pt-6 border-t border-gray-200">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Danger Zone</h3>
-            <form method="post" action="{{ path('admin_products_delete', {'id': product.id}) }}" onsubmit="return confirm('Are you sure you want to delete this product?')">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
-                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
-                    Delete Product
-                </button>
-            </form>
+            <button type="button" onclick="openDeleteModal({{ product.id }}, '{{ csrf_token('delete' ~ product.id) }}')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                Delete Product
+            </button>
         </div>
         {% endif %}
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Confirm Delete</h3>
+                <p class="text-gray-600 mb-6">Are you sure you want to delete this product? This action cannot be undone.</p>
+                <form id="deleteForm" method="post" data-turbo="false">
+                    <input type="hidden" name="_token" id="deleteToken">
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                            Delete
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openDeleteModal(productId, csrfToken) {
+    const modal = document.getElementById('deleteModal');
+    const deleteForm = document.getElementById('deleteForm');
+    const deleteToken = document.getElementById('deleteToken');
+    
+    // Set the form action and token
+    deleteForm.action = `/admin/products/${productId}`;
+    deleteToken.value = csrfToken;
+    
+    // Show the modal
+    modal.classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    modal.classList.add('hidden');
+}
+
+// Close modal when clicking outside
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+</script>
 
 {% endblock %}
