@@ -24,17 +24,9 @@
                 <span class="w-5 h-5 mr-3">📝</span>
                 Book Appointment
             </a>
-            <a href="#" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-cyan-600 hover:text-white transition-colors">
-                <span class="w-5 h-5 mr-3">🦷</span>
-                Treatment History
-            </a>
-            <a href="#" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-cyan-600 hover:text-white transition-colors">
+            <a href="{{ path('user_profile') }}" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-cyan-600 hover:text-white transition-colors {{ app.request.attributes.get('_route') starts with 'user_profile' ? 'bg-cyan-600 text-white' : '' }}">
                 <span class="w-5 h-5 mr-3">👤</span>
                 My Profile
-            </a>
-            <a href="#" class="flex items-center px-4 py-3 text-cyan-100 rounded-lg hover:bg-cyan-600 hover:text-white transition-colors">
-                <span class="w-5 h-5 mr-3">💬</span>
-                Support
             </a>
         </nav>
 

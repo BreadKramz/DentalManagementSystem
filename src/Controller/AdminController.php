@@ -32,6 +32,7 @@ class AdminController extends AbstractController
             'users' => $userRepository->findAll(),
             'products' => $products,
             'logs_count' => count($activityLogRepository->findAll()),
+            'appointments_count' => count($appointmentRepository->findAll()),
             'recent_appointments' => $appointmentRepository->findBy([], ['appointmentDate' => 'DESC', 'timeSlot' => 'ASC'], 5),
         ]);
     }
@@ -59,6 +60,16 @@ class AdminController extends AbstractController
             $appointment->setAppointmentDate(new \DateTime($date));
             $appointment->setTimeSlot($timeSlot);
             $appointment->setStatus($status);
+            $entityManager->flush();
+
+            // Log the update action
+            $log = new \App\Entity\ActivityLog();
+            $log->setUser($this->getUser());
+            $log->setRole(implode(', ', $this->getUser()->getRoles()));
+            $log->setAction('UPDATE Appointment');
+            $log->setEntityType('Appointment');
+            $log->setEntityId($appointment->getId());
+            $entityManager->persist($log);
             $entityManager->flush();
 
             return $this->redirectToRoute('admin_appointments');

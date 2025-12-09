@@ -1,0 +1,78 @@
+{% extends 'user/base.html.twig' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block page_title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Update Your Profile</h2>
+            <p class="text-gray-600">Keep your account information up to date</p>
+        </div>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+            
+            <!-- Email Section -->
+            <div class="bg-gradient-to-r from-cyan-50 to-teal-50 p-6 rounded-xl border border-cyan-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Email Address</h3>
+                <div>
+                    {{ form_label(form.email, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                    {{ form_widget(form.email, {'attr': {'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-colors'}}) }}
+                    {{ form_errors(form.email) }}
+                </div>
+            </div>
+
+            <!-- Password Section -->
+            <div class="bg-gradient-to-r from-orange-50 to-red-50 p-6 rounded-xl border border-orange-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Change Password</h3>
+                <p class="text-sm text-gray-600 mb-4">Leave blank if you don't want to change your password</p>
+                
+                <div class="space-y-4">
+                    <div>
+                        {{ form_label(form.plainPassword.first, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors'}}) }}
+                        {{ form_errors(form.plainPassword.first) }}
+                    </div>
+                    
+                    <div>
+                        {{ form_label(form.plainPassword.second, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors'}}) }}
+                        {{ form_errors(form.plainPassword.second) }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+                <a href="{{ path('user_profile') }}" class="text-gray-600 hover:text-gray-800 font-medium transition-colors">
+                    ← Back to Profile
+                </a>
+                
+                <button type="submit" class="bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+                    Update Profile
+                </button>
+            </div>
+            
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<!-- Security Notice -->
+<div class="max-w-2xl mx-auto mt-6">
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <span class="text-blue-600 text-xl">🔒</span>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">Security Notice</h3>
+                <div class="mt-2 text-sm text-blue-700">
+                    <p>Your password will be securely hashed before storage. Make sure to use a strong password with at least 6 characters.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

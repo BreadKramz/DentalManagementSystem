@@ -61,6 +61,16 @@ class AppointmentController extends AbstractController
             $entityManager->persist($appointment);
             $entityManager->flush();
 
+            // Log the create action
+            $log = new \App\Entity\ActivityLog();
+            $log->setUser($this->getUser());
+            $log->setRole(implode(', ', $this->getUser()->getRoles()));
+            $log->setAction('CREATE Appointment');
+            $log->setEntityType('Appointment');
+            $log->setEntityId($appointment->getId());
+            $entityManager->persist($log);
+            $entityManager->flush();
+
             $this->addFlash('success', 'Appointment booked successfully!');
             return $this->redirectToRoute('user_appointments');
         }
@@ -124,6 +134,16 @@ class AppointmentController extends AbstractController
             $appointment->setService($service);
             $appointment->setAppointmentDate($selectedDate);
             $appointment->setTimeSlot($timeSlot);
+            $entityManager->flush();
+
+            // Log the update action
+            $log = new \App\Entity\ActivityLog();
+            $log->setUser($this->getUser());
+            $log->setRole(implode(', ', $this->getUser()->getRoles()));
+            $log->setAction('UPDATE Appointment');
+            $log->setEntityType('Appointment');
+            $log->setEntityId($appointment->getId());
+            $entityManager->persist($log);
             $entityManager->flush();
 
             $this->addFlash('success', 'Appointment updated successfully.');
