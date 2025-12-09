@@ -65,6 +65,7 @@ class AdminController extends AbstractController
             // Log the update action
             $log = new \App\Entity\ActivityLog();
             $log->setUser($this->getUser());
+            $log->setUsername($this->getUser()->getUserIdentifier());
             $log->setRole(implode(', ', $this->getUser()->getRoles()));
             $log->setAction('UPDATE Appointment');
             $log->setEntityType('Appointment');
@@ -107,6 +108,16 @@ class AdminController extends AbstractController
     public function deleteAppointment(Request $request, Appointment $appointment, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$appointment->getId(), $request->request->get('_token'))) {
+            // Log the delete action before removing
+            $log = new \App\Entity\ActivityLog();
+            $log->setUser($this->getUser());
+            $log->setUsername($this->getUser()->getUserIdentifier());
+            $log->setRole(implode(', ', $this->getUser()->getRoles()));
+            $log->setAction('DELETE Appointment');
+            $log->setEntityType('Appointment');
+            $log->setEntityId($appointment->getId());
+            $entityManager->persist($log);
+
             $entityManager->remove($appointment);
             $entityManager->flush();
         }
@@ -139,6 +150,7 @@ class AdminController extends AbstractController
             // Log the create action
             $log = new \App\Entity\ActivityLog();
             $log->setUser($this->getUser());
+            $log->setUsername($this->getUser()->getUserIdentifier());
             $log->setRole(implode(', ', $this->getUser()->getRoles()));
             $log->setAction('CREATE User');
             $log->setEntityType('User');
@@ -170,6 +182,7 @@ class AdminController extends AbstractController
             // Log the update action
             $log = new \App\Entity\ActivityLog();
             $log->setUser($this->getUser());
+            $log->setUsername($this->getUser()->getUserIdentifier());
             $log->setRole(implode(', ', $this->getUser()->getRoles()));
             $log->setAction('UPDATE User');
             $log->setEntityType('User');
@@ -191,17 +204,52 @@ class AdminController extends AbstractController
     public function deleteUser(User $user, EntityManagerInterface $entityManager, Request $request): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($user);
-            $entityManager->flush();
+            // Store the user's email before deletion for activity logs
+            $userEmail = $user->getUserIdentifier();
 
-            // Log the delete action
+            // Log the delete action before removing the user
             $log = new \App\Entity\ActivityLog();
             $log->setUser($this->getUser());
+            $log->setUsername($this->getUser()->getUserIdentifier());
             $log->setRole(implode(', ', $this->getUser()->getRoles()));
             $log->setAction('DELETE User');
             $log->setEntityType('User');
             $log->setEntityId($user->getId());
             $entityManager->persist($log);
+            $entityManager->flush();
+
+            // Handle appointments - delete all appointments associated with this user
+            $appointments = $entityManager->getRepository(\App\Entity\Appointment::class)->findBy(['user' => $user]);
+            foreach ($appointments as $appointment) {
+                // Log the appointment deletion
+                $appointmentLog = new \App\Entity\ActivityLog();
+                $appointmentLog->setUser($this->getUser());
+                $appointmentLog->setUsername($this->getUser()->getUserIdentifier());
+                $appointmentLog->setRole(implode(', ', $this->getUser()->getRoles()));
+                $appointmentLog->setAction('CASCADE DELETE Appointment (User Deletion)');
+                $appointmentLog->setEntityType('Appointment');
+                $appointmentLog->setEntityId($appointment->getId());
+                $entityManager->persist($appointmentLog);
+                
+                // Remove the appointment
+                $entityManager->remove($appointment);
+            }
+
+            // Update all activity logs for this user to preserve their email in username field
+            $activityLogs = $entityManager->getRepository(\App\Entity\ActivityLog::class)->findBy(['user' => $user]);
+            foreach ($activityLogs as $activityLog) {
+                // Preserve the user's email in the username field
+                if (!$activityLog->getUsername()) {
+                    $activityLog->setUsername($userEmail);
+                }
+                // Remove the user relationship
+                $activityLog->setUser(null);
+            }
+
+            $entityManager->flush();
+
+            // Now delete the user
+            $entityManager->remove($user);
             $entityManager->flush();
         }
 
@@ -215,5 +263,29 @@ class AdminController extends AbstractController
         return $this->render('admin/activity_logs/index.html.twig', [
             'logs' => $activityLogRepository->findBy([], ['dateTime' => 'DESC']),
         ]);
+    }
+
+    #[Route('/activity-logs/{id}', name: 'admin_activity_logs_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function deleteActivityLog(Request $request, \App\Entity\ActivityLog $activityLog, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$activityLog->getId(), $request->request->get('_token'))) {
+            // Log the delete action before removing (but avoid logging the deletion of a log to prevent infinite loop)
+            if ($activityLog->getAction() !== 'DELETE ActivityLog') {
+                $log = new \App\Entity\ActivityLog();
+                $log->setUser($this->getUser());
+                $log->setUsername($this->getUser()->getUserIdentifier());
+                $log->setRole(implode(', ', $this->getUser()->getRoles()));
+                $log->setAction('DELETE ActivityLog');
+                $log->setEntityType('ActivityLog');
+                $log->setEntityId($activityLog->getId());
+                $entityManager->persist($log);
+            }
+
+            $entityManager->remove($activityLog);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('admin_activity_logs');
     }
 }

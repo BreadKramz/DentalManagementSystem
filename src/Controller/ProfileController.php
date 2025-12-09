@@ -56,6 +56,7 @@ class ProfileController extends AbstractController
             // Log the profile update action
             $log = new ActivityLog();
             $log->setUser($user);
+            $log->setUsername($user->getUserIdentifier());
             $log->setRole(implode(', ', $user->getRoles()));
             $log->setAction('UPDATE Profile');
             $log->setEntityType('User');

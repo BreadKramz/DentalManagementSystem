@@ -64,6 +64,7 @@ class ActivityLogSubscriber implements EventSubscriber
 
         $log = new ActivityLog();
         $log->setUser($user);
+        $log->setUsername($user->getUserIdentifier());
         $log->setRole(implode(', ', $user->getRoles()));
         $log->setAction($action . ' ' . (new \ReflectionClass($entity))->getShortName());
         $log->setEntityType((new \ReflectionClass($entity))->getShortName());
@@ -86,6 +87,7 @@ class ActivityLogSubscriber implements EventSubscriber
 
         $log = new ActivityLog();
         $log->setUser($user);
+        $log->setUsername($user->getUserIdentifier());
         $log->setRole(implode(', ', $user->getRoles()));
         $log->setAction($action . ' ' . (new \ReflectionClass($entity))->getShortName());
         $log->setEntityType((new \ReflectionClass($entity))->getShortName());

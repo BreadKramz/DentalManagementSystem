@@ -40,6 +40,17 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            // Log the registration action (user registers themselves)
+            $log = new \App\Entity\ActivityLog();
+            $log->setUser($user);
+            $log->setUsername($user->getEmail());
+            $log->setRole(implode(', ', $user->getRoles()));
+            $log->setAction('REGISTER User');
+            $log->setEntityType('User');
+            $log->setEntityId($user->getId());
+            $entityManager->persist($log);
+            $entityManager->flush();
+
             // do anything else you need here, like send an email
 
             return $this->redirectToRoute('app_login');

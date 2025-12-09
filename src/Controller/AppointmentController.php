@@ -64,6 +64,7 @@ class AppointmentController extends AbstractController
             // Log the create action
             $log = new \App\Entity\ActivityLog();
             $log->setUser($this->getUser());
+            $log->setUsername($this->getUser()->getUserIdentifier());
             $log->setRole(implode(', ', $this->getUser()->getRoles()));
             $log->setAction('CREATE Appointment');
             $log->setEntityType('Appointment');
@@ -139,6 +140,7 @@ class AppointmentController extends AbstractController
             // Log the update action
             $log = new \App\Entity\ActivityLog();
             $log->setUser($this->getUser());
+            $log->setUsername($this->getUser()->getUserIdentifier());
             $log->setRole(implode(', ', $this->getUser()->getRoles()));
             $log->setAction('UPDATE Appointment');
             $log->setEntityType('Appointment');
@@ -185,6 +187,17 @@ class AppointmentController extends AbstractController
 
         if ($this->isCsrfTokenValid('cancel'.$appointment->getId(), $request->request->get('_token'))) {
             $appointment->setStatus('cancelled');
+            $entityManager->flush();
+
+            // Log the cancel action
+            $log = new \App\Entity\ActivityLog();
+            $log->setUser($this->getUser());
+            $log->setUsername($this->getUser()->getUserIdentifier());
+            $log->setRole(implode(', ', $this->getUser()->getRoles()));
+            $log->setAction('CANCEL Appointment');
+            $log->setEntityType('Appointment');
+            $log->setEntityId($appointment->getId());
+            $entityManager->persist($log);
             $entityManager->flush();
 
             $this->addFlash('success', 'Appointment cancelled successfully.');

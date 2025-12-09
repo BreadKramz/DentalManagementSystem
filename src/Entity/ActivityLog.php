@@ -15,11 +15,14 @@ class ActivityLog
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
     #[ORM\Column(length: 255)]
     private ?string $role = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $username = null;
 
     #[ORM\Column(length: 255)]
     private ?string $action = null;
@@ -58,6 +61,18 @@ class ActivityLog
     public function setRole(string $role): static
     {
         $this->role = $role;
+
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
 
         return $this;
     }

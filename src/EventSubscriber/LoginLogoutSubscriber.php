@@ -28,6 +28,7 @@ class LoginLogoutSubscriber implements EventSubscriberInterface
 
         $log = new ActivityLog();
         $log->setUser($user);
+        $log->setUsername($user->getUserIdentifier());
         $log->setRole(implode(', ', $user->getRoles()));
         $log->setAction('LOGIN');
 
@@ -42,6 +43,7 @@ class LoginLogoutSubscriber implements EventSubscriberInterface
         if ($token && $user = $token->getUser()) {
             $log = new ActivityLog();
             $log->setUser($user);
+            $log->setUsername($user->getUserIdentifier());
             $log->setRole(implode(', ', $user->getRoles()));
             $log->setAction('LOGOUT');
 
