@@ -148,6 +148,15 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/users/{id}', name: 'admin_users_show')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function viewUser(User $user): Response
+    {
+        return $this->render('admin/users/show.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
     #[Route('/users/new', name: 'admin_users_new')]
     #[IsGranted('ROLE_ADMIN')]
     public function newUser(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response

@@ -1,0 +1,188 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}View User - {{ user.email }}{% endblock %}
+
+{% block page_title %}View User Details{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <a href="{{ path('admin_users') }}" class="inline-flex items-center text-cyan-600 hover:text-cyan-900 transition-colors">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to User Management
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- User Information Card -->
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-900">User Information</h2>
+            </div>
+            <div class="p-6">
+                <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">User ID</dt>
+                        <dd class="mt-1 text-sm text-gray-900">#{{ user.id }}</dd>
+                    </div>
+                    
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Email Address</dt>
+                        <dd class="mt-1 text-sm text-gray-900 font-medium">{{ user.email }}</dd>
+                    </div>
+                    
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Role(s)</dt>
+                        <dd class="mt-1">
+                            {% if 'ROLE_ADMIN' in user.roles %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">Admin</span>
+                            {% endif %}
+                            {% if 'ROLE_STAFF' in user.roles %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Staff</span>
+                            {% endif %}
+                            {% if 'ROLE_USER' in user.roles and 'ROLE_ADMIN' not in user.roles and 'ROLE_STAFF' not in user.roles %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">User</span>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Total Appointments</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ user.appointments|length }}</dd>
+                    </div>
+                    
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Products Created</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ user.products|length }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="space-y-6">
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Actions</h3>
+            <div class="space-y-3">
+                <a href="{{ path('admin_users_edit', {'id': user.id}) }}" class="w-full bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 text-center block">
+                    Edit User
+                </a>
+                {% if user != app.user %}
+                <button type="button" onclick="openDeleteModal({{ user.id }}, '{{ csrf_token('delete' ~ user.id) }}')" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                    Delete User
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Appointments Card -->
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Recent Appointments</h3>
+            </div>
+            <div class="p-6">
+                {% if user.appointments|length > 0 %}
+                    <div class="space-y-3">
+                        {% for appointment in user.appointments|slice(0, 5) %}
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">{{ appointment.service }}</p>
+                                <p class="text-xs text-gray-500">{{ appointment.appointmentDate|date('M d, Y') }} - {{ appointment.timeSlot }}</p>
+                            </div>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                {% if appointment.status == 'confirmed' %}bg-green-100 text-green-800
+                                {% elseif appointment.status == 'cancelled' %}bg-red-100 text-red-800
+                                {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                {{ appointment.status|title }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                        {% if user.appointments|length > 5 %}
+                        <p class="text-xs text-gray-500 text-center">and {{ user.appointments|length - 5 }} more...</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="text-sm text-gray-500 text-center py-4">No appointments found</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Products Created Card -->
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Products Created</h3>
+            </div>
+            <div class="p-6">
+                {% if user.products|length > 0 %}
+                    <div class="space-y-3">
+                        {% for product in user.products|slice(0, 5) %}
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <p class="text-sm font-medium text-gray-900">{{ product.name }}</p>
+                            <p class="text-xs text-gray-500">${{ product.price|number_format(2) }}</p>
+                        </div>
+                        {% endfor %}
+                        {% if user.products|length > 5 %}
+                        <p class="text-xs text-gray-500 text-center">and {{ user.products|length - 5 }} more...</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="text-sm text-gray-500 text-center py-4">No products created</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Confirm Delete</h3>
+                <p class="text-gray-600 mb-6">Are you sure you want to delete this user? This action cannot be undone.</p>
+                <form id="deleteForm" method="post" data-turbo="false">
+                    <input type="hidden" name="_token" id="deleteToken">
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                            Delete
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openDeleteModal(userId, csrfToken) {
+    const modal = document.getElementById('deleteModal');
+    const deleteForm = document.getElementById('deleteForm');
+    const deleteToken = document.getElementById('deleteToken');
+    
+    // Set the form action and token
+    deleteForm.action = `/admin/users/${userId}/delete`;
+    deleteToken.value = csrfToken;
+    
+    // Show the modal
+    modal.classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    modal.classList.add('hidden');
+}
+
+// Close modal when clicking outside
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+</script>
+{% endblock %}
