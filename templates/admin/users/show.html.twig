@@ -49,6 +49,27 @@
                     </div>
                     
                     <div>
+                        <dt class="text-sm font-medium text-gray-500">Status</dt>
+                        <dd class="mt-1">
+                            {% if user.status == 'active' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <svg class="w-2 h-2 mr-1.5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <circle cx="10" cy="10" r="3"></circle>
+                                    </svg>
+                                    Active
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <svg class="w-2 h-2 mr-1.5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <circle cx="10" cy="10" r="3"></circle>
+                                    </svg>
+                                    Inactive
+                                </span>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    
+                    <div>
                         <dt class="text-sm font-medium text-gray-500">Total Appointments</dt>
                         <dd class="mt-1 text-sm text-gray-900">{{ user.appointments|length }}</dd>
                     </div>
@@ -70,6 +91,9 @@
                 <a href="{{ path('admin_users_edit', {'id': user.id}) }}" class="w-full bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 text-center block">
                     Edit User
                 </a>
+                <button type="button" onclick="toggleUserStatus({{ user.id }}, '{{ csrf_token('toggle_status' ~ user.id) }}')" class="w-full px-4 py-2 rounded-lg font-medium transition-colors {% if user.status == 'active' %}bg-orange-600 hover:bg-orange-700 text-white{% else %}bg-green-600 hover:bg-green-700 text-white{% endif %}">
+                    {% if user.status == 'active' %}Deactivate User{% else %}Activate User{% endif %}
+                </button>
                 {% if user != app.user %}
                 <button type="button" onclick="openDeleteModal({{ user.id }}, '{{ csrf_token('delete' ~ user.id) }}')" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                     Delete User
@@ -184,5 +208,30 @@ document.getElementById('deleteModal').addEventListener('click', function(e) {
         closeDeleteModal();
     }
 });
+
+function toggleUserStatus(userId, csrfToken) {
+    if (confirm('Are you sure you want to toggle this user\'s status?')) {
+        fetch(`/admin/users/${userId}/toggle-status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ _token: csrfToken })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error toggling user status: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while toggling user status');
+        });
+    }
+}
 </script>
 {% endblock %}

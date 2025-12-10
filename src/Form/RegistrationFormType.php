@@ -38,8 +38,12 @@ class RegistrationFormType extends AbstractType
                 'constraints' => [
                     new IsTrue(message: 'You should agree to our terms.'),
                 ],
-            ])
-        ;
+            ]);
+
+        // Set default status to active for new registrations
+        if ($options['data']->getStatus() === null) {
+            $options['data']->setStatus('active');
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

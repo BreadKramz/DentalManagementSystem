@@ -279,6 +279,64 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_users');
     }
 
+    #[Route('/users/{id}/toggle-status', name: 'admin_users_toggle_status', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function toggleUserStatus(User $user, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Get CSRF token from request
+        $csrfToken = null;
+        
+        if ($request->isXmlHttpRequest()) {
+            // For AJAX requests, get token from JSON body
+            $content = $request->getContent();
+            $data = json_decode($content, true);
+            $csrfToken = $data['_token'] ?? null;
+        } else {
+            // For regular form requests, get token from request parameters
+            $csrfToken = $request->request->get('_token');
+        }
+
+        if ($this->isCsrfTokenValid('toggle_status'.$user->getId(), $csrfToken)) {
+            // Toggle the user status
+            $currentStatus = $user->getStatus();
+            $newStatus = $currentStatus === 'active' ? 'inactive' : 'active';
+            $user->setStatus($newStatus);
+            
+            $entityManager->flush();
+
+            // Log the status change
+            $log = new \App\Entity\ActivityLog();
+            $log->setUser($this->getUser());
+            $log->setUsername($this->getUser()->getUserIdentifier());
+            $log->setRole(implode(', ', $this->getUser()->getRoles()));
+            $log->setAction('TOGGLE_USER_STATUS - ' . $user->getEmail() . ' (' . $currentStatus . ' -> ' . $newStatus . ')');
+            $log->setEntityType('User');
+            $log->setEntityId($user->getId());
+            $entityManager->persist($log);
+            $entityManager->flush();
+
+            // Return JSON response for AJAX
+            if ($request->isXmlHttpRequest()) {
+                return $this->json([
+                    'success' => true,
+                    'message' => 'User status updated successfully',
+                    'new_status' => $newStatus
+                ]);
+            }
+
+            return $this->redirectToRoute('admin_users');
+        }
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Invalid CSRF token'
+            ], 400);
+        }
+
+        throw $this->createAccessDeniedException('Invalid CSRF token');
+    }
+
     #[Route('/activity-logs', name: 'admin_activity_logs')]
     #[IsGranted('ROLE_ADMIN')]
     public function activityLogs(ActivityLogRepository $activityLogRepository): Response
