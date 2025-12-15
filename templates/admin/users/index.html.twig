@@ -74,7 +74,7 @@
                         <div class="flex items-center space-x-4">
                             <a href="{{ path('admin_users_show', {'id': user.id}) }}" class="text-indigo-600 hover:text-indigo-900 transition-colors">View</a>
                             <a href="{{ path('admin_users_edit', {'id': user.id}) }}" class="text-cyan-600 hover:text-cyan-900 transition-colors">Edit</a>
-                            <button type="button" onclick="toggleUserStatus({{ user.id }}, '{{ csrf_token('toggle_status' ~ user.id) }}')" class="transition-colors {% if user.status == 'active' %}text-orange-600 hover:text-orange-900{% else %}text-green-600 hover:text-green-900{% endif %}">
+                            <button type="button" onclick="openStatusToggleModal({{ user.id }}, '{{ csrf_token('toggle_status' ~ user.id) }}', {{ user.status == 'active' ? 'true' : 'false' }})" class="transition-colors {% if user.status == 'active' %}text-orange-600 hover:text-orange-900{% else %}text-green-600 hover:text-green-900{% endif %}">
                                 {% if user.status == 'active' %}Deactivate{% else %}Activate{% endif %}
                             </button>
                             {% if user != app.user %}
@@ -107,6 +107,26 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Status Toggle Confirmation Modal -->
+<div id="statusToggleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <h3 id="statusToggleTitle" class="text-lg font-semibold text-gray-900 mb-4">Confirm Status Change</h3>
+                <p id="statusToggleMessage" class="text-gray-600 mb-6">Are you sure you want to change this user's status?</p>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeStatusToggleModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                        Cancel
+                    </button>
+                    <button type="button" id="statusToggleConfirm" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors">
+                        Confirm
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -176,29 +196,77 @@ document.getElementById('deleteModal').addEventListener('click', function(e) {
     }
 });
 
-function toggleUserStatus(userId, csrfToken) {
-    if (confirm('Are you sure you want to toggle this user\'s status?')) {
-        fetch(`/admin/users/${userId}/toggle-status`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({ _token: csrfToken })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert('Error toggling user status: ' + (data.message || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while toggling user status');
-        });
+// Status toggle modal functions
+let statusToggleData = { userId: null, csrfToken: null };
+
+function openStatusToggleModal(userId, csrfToken, isActive) {
+    const modal = document.getElementById('statusToggleModal');
+    const title = document.getElementById('statusToggleTitle');
+    const message = document.getElementById('statusToggleMessage');
+    const confirmBtn = document.getElementById('statusToggleConfirm');
+    
+    statusToggleData.userId = userId;
+    statusToggleData.csrfToken = csrfToken;
+    
+    if (isActive) {
+        title.textContent = 'Deactivate User';
+        message.textContent = 'Are you sure you want to deactivate this user? They will not be able to log in.';
+        confirmBtn.textContent = 'Deactivate';
+        confirmBtn.className = 'px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors';
+    } else {
+        title.textContent = 'Activate User';
+        message.textContent = 'Are you sure you want to activate this user? They will be able to log in again.';
+        confirmBtn.textContent = 'Activate';
+        confirmBtn.className = 'px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors';
     }
+    
+    modal.classList.remove('hidden');
 }
+
+function closeStatusToggleModal() {
+    const modal = document.getElementById('statusToggleModal');
+    modal.classList.add('hidden');
+    statusToggleData = { userId: null, csrfToken: null };
+}
+
+function confirmStatusToggle() {
+    if (!statusToggleData.userId || !statusToggleData.csrfToken) {
+        return;
+    }
+    
+    fetch(`/admin/users/${statusToggleData.userId}/toggle-status`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ _token: statusToggleData.csrfToken })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error toggling user status: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while toggling user status');
+    })
+    .finally(() => {
+        closeStatusToggleModal();
+    });
+}
+
+// Set up status toggle confirm button
+document.getElementById('statusToggleConfirm').addEventListener('click', confirmStatusToggle);
+
+// Close status toggle modal when clicking outside
+document.getElementById('statusToggleModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeStatusToggleModal();
+    }
+});
 </script>
 {% endblock %}
